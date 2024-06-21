@@ -1,5 +1,7 @@
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
+import { AuthContextProvider } from "../../context/authContext";
+import { LoadingProvider } from "../../context/loadContext";
 
 const dm = DM_Sans({
   subsets: ["latin", "latin-ext"],
@@ -26,7 +28,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${dm.variable}font-sans`}>{children}</body>
+      <body className={`${dm.variable}font-sans`}>
+        <LoadingProvider>
+          <AuthContextProvider>{children}</AuthContextProvider>
+        </LoadingProvider>
+      </body>
     </html>
   );
 }
