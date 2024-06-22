@@ -17,7 +17,7 @@ const dm = DM_Sans({
     "900",
     "1000",
   ],
-  variable: "font-dm",
+  variable: "--font-dm",
 });
 
 export const metadata = {
@@ -28,7 +28,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${dm.variable}font-sans`}>
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+      </head>
+      <body className={`${dm.variable} font-sans`}>
         <LoadingProvider>
           <AuthContextProvider>{children}</AuthContextProvider>
         </LoadingProvider>

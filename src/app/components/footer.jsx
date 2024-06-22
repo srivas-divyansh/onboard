@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <div className="absolute left-0 right-0 rounded-t-xl bg-[#12547C] text-white flex fkex-row py-8 px-40 mb-0 justify-between">
+    <div className="absolute left-0 right-0 rounded-t-3xl bg-[#12547C] text-white flex fkex-row py-8 px-40 mb-0 justify-between">
       <div className="my-auto">
         <h2 className="text-2xl font-semibold">Developers :</h2>
         <div className="grid grid-cols-2 gap-3 pt-2 text-lg">

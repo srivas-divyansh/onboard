@@ -1,0 +1,19 @@
+{
+    "welcome": "Let's find all the wonderful destinations. Come OnBoard",
+    "findRoute": "Find My Route",
+    "search": "Lets Go",
+    "time": "Time Efficient Path",
+    "cost": "Cost Efficient Path",
+    "timeContent": "Find the route that takes the least amount of time from your location to your destination.",
+    "costContent": "Find the route that costs the least based on bus prices in your area.",
+    "distance": "Total Distance:",
+    "price": "Total Price:",
+    "booking": "Book Ticket",
+    "developers": "Developers:",
+    "names": {
+      "a": "Abhinav Singh",
+      "d": "Divyansh Srivastava",
+      "p": "Piyush Singh",
+      "u": "Utkarsh Ranjan"
+    }
+  }
