@@ -24,9 +24,9 @@ export default function Main() {
       </div>
       <Map />
       <Options />
-      <div>
+      {/* <div>
         <PriceDetails />
-      </div>
+      </div> */}
       <div className="relative w-full">
         <Footer />
       </div>

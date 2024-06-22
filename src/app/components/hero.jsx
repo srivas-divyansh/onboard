@@ -30,6 +30,7 @@ const Hero = () => {
             loading="lazy"
           />
         </div>
+
         <LocationDisplay />
 
         <div>
