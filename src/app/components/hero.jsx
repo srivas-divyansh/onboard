@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { auth } from "@/app/firebase";
+import LocationDisplay from "./liveLocation";
 
 const Hero = () => {
   const router = useRouter();
@@ -29,6 +30,7 @@ const Hero = () => {
             loading="lazy"
           />
         </div>
+        <LocationDisplay />
         <div>
           <button
             onClick={handleLogout}

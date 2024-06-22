@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 
 const LocationDisplay = () => {
@@ -15,11 +14,26 @@ const LocationDisplay = () => {
           });
 
           const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=NEXT_PUBLIC_MAPS_API_KEY`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=${process.env.NEXT_PUBLIC_MAPS_API_KEY}`
           );
           const data = await response.json();
           if (data.results && data.results.length > 0) {
-            setNearestLocation(data.results[0].formatted_address);
+            // Find the 'locality' type in the address components
+            const locality = data.results[0].address_components.find(
+              (component) => component.types.includes("locality")
+            );
+            // Find the 'sublocality' type in the address components
+            const sublocality = data.results[0].address_components.find(
+              (component) => component.types.includes("sublocality")
+            );
+            // Format the locality and sublocality
+            let locationName = "";
+            if (sublocality && locality) {
+              locationName = `${sublocality.long_name}, ${locality.long_name}`;
+            } else if (locality) {
+              locationName = locality.long_name;
+            }
+            setNearestLocation(locationName);
           }
         },
         (error) => {
@@ -34,9 +48,15 @@ const LocationDisplay = () => {
   return (
     <div>
       {location ? (
-        <div className=" text-xl font-semibold text-slate-900">
+        <div className="text-lg font-semibold text-slate-900">
           <h2>Your Current Location:</h2>
-          {nearestLocation && <p>{nearestLocation}</p>}
+          {nearestLocation ? (
+            <p className="text-[#12547c] font-bold text-2xl">
+              {nearestLocation}
+            </p>
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
       ) : (
         <p>Loading...</p>
