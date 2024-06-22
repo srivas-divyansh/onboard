@@ -1,24 +1,9 @@
-#!/usr/bin/env python3
-# Copyright 2010-2024 Google LLC
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# [START program]
 """Simple Vehicles Routing Problem."""
 
-# [START import]
+
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
-# [END import]
+
 
 coordinates=[
     [19.12284, 72.99966],
@@ -1020,18 +1005,18 @@ routesFormed=False
 
 graph={}
 
-# [START data_model]
+
 def create_data_model(num_vehicles,starts,ends):
     """Stores the data for the problem."""
     data = {}
     data["distance_matrix"] = distance_matrix
     data["num_vehicles"] = num_vehicles
-    # [START starts_ends]
+    
     data["starts"] = starts
     data["ends"] = ends
-    # [END starts_ends]
+    
     return data
-    # [END data_model]
+    
 
 def get_routes(data, manager, routing, solution):
     routes = []
@@ -1045,7 +1030,7 @@ def get_routes(data, manager, routing, solution):
         routes.append(route)
     return routes
 
-# [START solution_printer]
+
 def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
     print(f"Objective: {solution.ObjectiveValue()}")
@@ -1066,7 +1051,7 @@ def print_solution(data, manager, routing, solution):
         print(plan_output)
         max_route_distance = max(route_distance, max_route_distance)
     print(f"Maximum of the route distances: {max_route_distance}m")
-    # [END solution_printer]
+    
 
 def createGraph(routes):
     for route in routes:
@@ -1090,8 +1075,6 @@ def get_busRoute(start_node,end_node):
                 if newpath: return newpath
         return None
     
-
-    # Find and display the path
     path = get_traversal(start_node, end_node)
     if path:
         print(path)
@@ -1099,9 +1082,6 @@ def get_busRoute(start_node,end_node):
         print("No path exists between", start_node, "and", end_node)
         
 def get_path(starts,ends):
-    """Entry point of the program."""
-    # Instantiate the data problem.
-    # [START data]
     start_ind=0
     end_ind=0
     for i in range(len(coordinates)):
@@ -1110,75 +1090,49 @@ def get_path(starts,ends):
         if coordinates[i]==ends:
             end_ind=i
     data = create_data_model(4,[0,3,5,7],[10,13,15,17])
-    # [END data]
-
-    # Create the routing index manager.
-    # [START index_manager]
+    
     manager = pywrapcp.RoutingIndexManager(
         len(data["distance_matrix"]), data["num_vehicles"], data["starts"], data["ends"]
     )
-    # [END index_manager]
-
-    # Create Routing Model.
-    # [START routing_model]
+    
     routing = pywrapcp.RoutingModel(manager)
-    # [END routing_model]
-
-    # Create and register a transit callback.
-    # [START transit_callback]
+ 
     def distance_callback(from_index, to_index):
-        """Returns the distance between the two nodes."""
-        # Convert from routing variable Index to distance matrix NodeIndex.
+        
         from_node = manager.IndexToNode(from_index)
         to_node = manager.IndexToNode(to_index)
         return data["distance_matrix"][from_node][to_node]
 
     transit_callback_index = routing.RegisterTransitCallback(distance_callback)
-    # [END transit_callback]
-
-    # Define cost of each arc.
-    # [START arc_cost]
     routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
-    # [END arc_cost]
-
-    # Add Distance constraint.
-    # [START distance_constraint]
     dimension_name = "Distance"
     routing.AddDimension(
         transit_callback_index,
-        0,  # no slack
-        1000000,  # vehicle maximum travel distance
-        True,  # start cumul to zero
+        0,  
+        1000000,  
+        True,  
         dimension_name,
     )
     distance_dimension = routing.GetDimensionOrDie(dimension_name)
     distance_dimension.SetGlobalSpanCostCoefficient(100)
-    # [END distance_constraint]
-
-    # Setting first solution heuristic.
-    # [START parameters]
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
     )
-    # [END parameters]
-
-    # Solve the problem.
-    # [START solve]
+    
+    
     solution = routing.SolveWithParameters(search_parameters)
-    # [END solve]
-
-    # Print solution on console.
-    # [START print_solution]
+    
     if solution:
         indices=get_routes(data, manager, routing, solution)
+        print_solution(data, manager, routing, solution)
         if len(graph)==0: createGraph(indices)
         get_busRoute(start_ind,end_ind)
         route=[]
         for i in range(len(indices[0])):
             route.append(coordinates[indices[0][i]])
         return route
-    # [END print_solution]
+    
     else:
       return "No Solution Found!"
 
