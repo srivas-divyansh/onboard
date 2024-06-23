@@ -45,6 +45,52 @@ const Selection = () => {
     setDestination(temp);
   };
 
+  // const handleLetsGo = () => {
+  //   if (departure && destination) {
+  //     const selectedDeparture = busStops.find(
+  //       (stop) => stop.value === departure.value
+  //     );
+  //     const selectedDestination = busStops.find(
+  //       (stop) => stop.value === destination.value
+  //     );
+
+  //     if (!selectedDeparture || !selectedDestination) {
+  //       console.error("Selected departure or destination is invalid");
+  //       return;
+  //     }
+
+  //     const data = {
+  //       start: [selectedDeparture.latitude, selectedDeparture.longitude],
+  //       end: [selectedDestination.latitude, selectedDestination.longitude],
+  //     };
+
+  //     axios
+  //       .post("http://10.42.0.106:5000/getRoute", data, {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //       .then((response) => {
+  //         console.log("Response from server:", response.data);
+  //         setPathData(response.data);
+  //       })
+  //       .catch((error) => {
+  //         if (error.response) {
+  //           console.error("Error response:", error.response.data);
+  //           console.error("Error status:", error.response.status);
+  //           console.error("Error headers:", error.response.headers);
+  //         } else if (error.request) {
+  //           console.error("Error request:", error.request);
+  //         } else {
+  //           console.error("Error message:", error.message);
+  //         }
+  //         console.error("Error config:", error.config);
+  //       });
+  //   } else {
+  //     console.error("Departure or destination not selected");
+  //   }
+  // };
+
   const handleLetsGo = () => {
     if (departure && destination) {
       const selectedDeparture = busStops.find(
@@ -64,28 +110,60 @@ const Selection = () => {
         end: [selectedDestination.latitude, selectedDestination.longitude],
       };
 
-      axios
-        .post("http://10.42.0.106:5000/getRoute", data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          console.log("Response from server:", response.data);
-          setPathData(response.data);
-        })
-        .catch((error) => {
-          if (error.response) {
-            console.error("Error response:", error.response.data);
-            console.error("Error status:", error.response.status);
-            console.error("Error headers:", error.response.headers);
-          } else if (error.request) {
-            console.error("Error request:", error.request);
-          } else {
-            console.error("Error message:", error.message);
-          }
-          console.error("Error config:", error.config);
-        });
+      // Check the current time
+      const currentTime = new Date();
+      const currentHour = currentTime.getHours();
+
+      if (
+        (currentHour >= 7 && currentHour <= 11) ||
+        (currentHour >= 17 && currentHour <= 22)
+      ) {
+        axios
+          .post("http://10.42.0.106:5000/getTrafficRoute", data, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            console.log("Traffic route response from server:", response.data);
+            setPathData(response.data);
+          })
+          .catch((error) => {
+            if (error.response) {
+              console.error("Error response:", error.response.data);
+              console.error("Error status:", error.response.status);
+              console.error("Error headers:", error.response.headers);
+            } else if (error.request) {
+              console.error("Error request:", error.request);
+            } else {
+              console.error("Error message:", error.message);
+            }
+            console.error("Error config:", error.config);
+          });
+      } else {
+        axios
+          .post("http://10.42.0.106:5000/getRoute", data, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            console.log("Route response from server:", response.data);
+            setPathData(response.data);
+          })
+          .catch((error) => {
+            if (error.response) {
+              console.error("Error response:", error.response.data);
+              console.error("Error status:", error.response.status);
+              console.error("Error headers:", error.response.headers);
+            } else if (error.request) {
+              console.error("Error request:", error.request);
+            } else {
+              console.error("Error message:", error.message);
+            }
+            console.error("Error config:", error.config);
+          });
+      }
     } else {
       console.error("Departure or destination not selected");
     }
