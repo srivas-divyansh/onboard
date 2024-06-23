@@ -18,6 +18,9 @@ export default function Main() {
       <div className="fixed z-50 right-0 bottom-0">
         <Chat />
       </div>
+      <div className="fixed z-50 right-0 bottom-0">
+        <Chat />
+      </div>
       <div className="h-[100vh] ">
         <Hero />
       </div>

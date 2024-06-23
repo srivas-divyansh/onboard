@@ -30,9 +30,7 @@ const Hero = () => {
             loading="lazy"
           />
         </div>
-
         <LocationDisplay />
-
         <div>
           <button
             onClick={handleLogout}
