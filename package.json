@@ -1,0 +1,35 @@
+{
+  "name": "onboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.13.0",
+    "@googlemaps/js-api-loader": "^1.16.6",
+    "@next/font": "^14.2.4",
+    "@types/google.maps": "^3.55.10",
+    "axios": "^1.7.2",
+    "firebase": "^10.12.2",
+    "next": "14.2.4",
+    "next-auth": "^4.24.7",
+    "next-translate": "^2.6.2",
+    "razorpay": "^2.9.4",
+    "react": "^18",
+    "react-chatbot-kit": "^2.2.2",
+    "react-dom": "^18",
+    "react-firebase-hooks": "^5.1.1",
+    "react-select": "^5.8.0",
+    "shortid": "^2.2.16"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.4",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
+  }
+}

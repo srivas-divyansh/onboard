@@ -40,3 +40,4 @@ This project was collaboratively developed by a team of four, with specific cont
 - **Mobile Application**: Piyush Singh
 - **Algorithm and Data Preprocessing**: Divyansh Srivastava
 - **Leadership and Cross-functional Support**: Utkarsh Ranjan, who played a pivotal role in web and mobile app development, algorithm optimization, and server deployment, connecting the algorithmic model with the web and mobile platforms.
+
