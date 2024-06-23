@@ -6,7 +6,7 @@ const Map = ({ pathData }) => {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markers = useRef([]);
-  const directionsRendererRef = useRef(null);
+  const directionsRenderers = useRef([]);
 
   useEffect(() => {
     if (!mapLoaded && pathData) {
@@ -91,6 +91,13 @@ const Map = ({ pathData }) => {
       mapInstance.current.setCenter(centerPoint);
       mapInstance.current.fitBounds(bounds);
 
+      // Clear existing directions
+      directionsRenderers.current.forEach((renderer) => {
+        renderer.setMap(null);
+      });
+      directionsRenderers.current = [];
+
+      // Render new directions
       for (let i = 0; i < pathCoordinates.length - 1; i++) {
         calculateAndDisplayRoute(
           mapInstance.current,
@@ -103,10 +110,6 @@ const Map = ({ pathData }) => {
 
   const calculateAndDisplayRoute = (map, origin, destination) => {
     const directionsService = new google.maps.DirectionsService();
-
-    if (directionsRendererRef.current) {
-      directionsRendererRef.current.setMap(null);
-    }
 
     const directionsRenderer = new google.maps.DirectionsRenderer({
       map,
@@ -122,7 +125,7 @@ const Map = ({ pathData }) => {
       })
       .then((response) => {
         directionsRenderer.setDirections(response);
-        directionsRendererRef.current = directionsRenderer;
+        directionsRenderers.current.push(directionsRenderer);
       })
       .catch((error) => console.error("Directions request failed:", error));
   };
