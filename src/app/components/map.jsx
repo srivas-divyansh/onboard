@@ -1,87 +1,117 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 
-const Map = () => {
+const Map = ({ pathData }) => {
+  const [mapLoaded, setMapLoaded] = useState(false);
   const mapRef = useRef(null);
-  const [locations, setLocations] = useState([]);
+  const mapInstance = useRef(null);
+  const markers = useRef([]);
+  const directionsRendererRef = useRef(null);
 
   useEffect(() => {
-    const initializeMap = async () => {
+    if (!mapLoaded && pathData) {
       const loader = new Loader({
         apiKey: process.env.NEXT_PUBLIC_MAPS_API_KEY,
         version: "weekly",
       });
 
-      await loader.load();
-      const map = new google.maps.Map(mapRef.current, {
-        center: { lat: 19.07609, lng: 72.877426 },
-        zoom: 8,
-      });
-
-      fetch("/sampleLocation.json")
-        .then((response) => response.json())
-        .then((data) => {
-          setLocations(data.Path);
-
-          const pathCoordinates = data.Path.map((location) => ({
-            lat: location[0],
-            lng: location[1],
-          }));
-
-          // Start marker
-          new google.maps.Marker({
-            position: pathCoordinates[0],
-            map,
-          });
-
-          // Middle markers
-          for (let i = 1; i < pathCoordinates.length - 1; i++) {
-            new google.maps.Marker({
-              position: pathCoordinates[i],
-              map,
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 4.2,
-                fillOpacity: 0.7,
-                strokeColor: "orange",
-              },
+      loader
+        .load()
+        .then(() => {
+          try {
+            mapInstance.current = new google.maps.Map(mapRef.current, {
+              center: { lat: 19.07609, lng: 72.877426 },
+              zoom: 8,
             });
+
+            setMapLoaded(true);
+          } catch (error) {
+            console.error("Error initializing map:", error);
           }
-
-          // End marker
-          new google.maps.Marker({
-            position: pathCoordinates[pathCoordinates.length - 1],
-            map,
-          });
-
-          const bounds = new google.maps.LatLngBounds();
-          pathCoordinates.forEach((coord) => {
-            bounds.extend(coord);
-          });
-          const centerPoint = bounds.getCenter();
-
-          map.setCenter(centerPoint);
-          map.fitBounds(bounds);
-
-          for (let i = 0; i < pathCoordinates.length - 1; i++) {
-            calculateAndDisplayRoute(
-              map,
-              pathCoordinates[i],
-              pathCoordinates[i + 1]
-            );
-          }
+        })
+        .catch((error) => {
+          console.error("Error loading Google Maps API:", error);
         });
-    };
+    }
+  }, [mapLoaded, pathData]);
 
-    initializeMap();
-  }, []);
+  useEffect(() => {
+    if (mapLoaded && pathData) {
+      const pathCoordinates = pathData.Path.map((location) => ({
+        lat: location[0],
+        lng: location[1],
+      }));
+
+      // Clear existing markers
+      markers.current.forEach((marker) => {
+        marker.setMap(null);
+      });
+      markers.current = [];
+
+      // Start marker
+      markers.current.push(
+        new google.maps.Marker({
+          position: pathCoordinates[0],
+          map: mapInstance.current,
+          label: "A",
+        })
+      );
+
+      // Middle markers
+      for (let i = 1; i < pathCoordinates.length - 1; i++) {
+        markers.current.push(
+          new google.maps.Marker({
+            position: pathCoordinates[i],
+            map: mapInstance.current,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 4.2,
+              fillOpacity: 0.7,
+              strokeColor: "orange",
+            },
+          })
+        );
+      }
+
+      // End marker
+      markers.current.push(
+        new google.maps.Marker({
+          position: pathCoordinates[pathCoordinates.length - 1],
+          map: mapInstance.current,
+          label: "B",
+        })
+      );
+
+      const bounds = new google.maps.LatLngBounds();
+      pathCoordinates.forEach((coord) => {
+        bounds.extend(coord);
+      });
+      const centerPoint = bounds.getCenter();
+
+      mapInstance.current.setCenter(centerPoint);
+      mapInstance.current.fitBounds(bounds);
+
+      for (let i = 0; i < pathCoordinates.length - 1; i++) {
+        calculateAndDisplayRoute(
+          mapInstance.current,
+          pathCoordinates[i],
+          pathCoordinates[i + 1]
+        );
+      }
+    }
+  }, [mapLoaded, pathData]);
 
   const calculateAndDisplayRoute = (map, origin, destination) => {
     const directionsService = new google.maps.DirectionsService();
+
+    if (directionsRendererRef.current) {
+      directionsRendererRef.current.setMap(null);
+    }
+
     const directionsRenderer = new google.maps.DirectionsRenderer({
       map,
       suppressMarkers: true,
-      preserveViewport: true, // This will prevent the DirectionsRenderer from auto-centering the map
+      preserveViewport: true,
     });
 
     directionsService
@@ -92,9 +122,14 @@ const Map = () => {
       })
       .then((response) => {
         directionsRenderer.setDirections(response);
+        directionsRendererRef.current = directionsRenderer;
       })
-      .catch((e) => window.alert("Directions request failed due to " + status));
+      .catch((error) => console.error("Directions request failed:", error));
   };
+
+  if (!pathData) {
+    return null; // Render nothing if pathData is not available
+  }
 
   return (
     <main

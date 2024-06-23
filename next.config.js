@@ -1,5 +1,4 @@
 const path = require("path");
-const nextTranslate = require("next-translate");
 
 module.exports = {
   pageExtensions: ["jsx", "js"],
@@ -11,9 +10,4 @@ module.exports = {
     locales: ["en", "hi", "mr"],
     defaultLocale: "en",
   },
-  // env: {
-  //   RAZORPAY_KEY: "",
-  //   RAZORPAY_SECRET: "",
-  // },
-  nextTranslate,
 };
