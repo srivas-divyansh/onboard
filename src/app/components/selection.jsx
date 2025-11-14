@@ -119,7 +119,7 @@ const Selection = () => {
         (currentHour >= 17 && currentHour <= 22)
       ) {
         axios
-          .post("http://10.42.0.106:5000/getTrafficRoute", data, {
+          .post("http://localhost:5000/getTrafficRoute", data, {
             headers: {
               "Content-Type": "application/json",
             },
@@ -142,7 +142,7 @@ const Selection = () => {
           });
       } else {
         axios
-          .post("http://10.42.0.106:5000/getRoute", data, {
+          .post("http://localhost:5000/getRoute", data, {
             headers: {
               "Content-Type": "application/json",
             },
